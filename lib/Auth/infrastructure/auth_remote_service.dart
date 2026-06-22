@@ -22,6 +22,8 @@ class AuthRemoteService {
         String token = responseData['token'];
         Map<String, dynamic> userData = responseData['user'];
         debugPrint('Login successful');
+        debugPrint('Token: $token');
+        debugPrint('User Data: $userData');
       } else {
         // Handle unsuccessful login
         debugPrint('Login failed with status code: ${response.statusCode}');
