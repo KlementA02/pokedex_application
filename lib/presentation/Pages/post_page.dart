@@ -39,9 +39,8 @@ class _PostPageState extends ConsumerState<PostPage> {
         'attack': int.tryParse(_attackController.text) ?? 0,
         'defense': int.tryParse(_defenseController.text) ?? 0,
       };
-      ref.read(pageNumber.notifier).state = 0; // Switch to the GetPage after posting
-      // 2. Use the Notifier's postPokemon method which handles state transitions
-      // and error management to prevent UI hangs
+      ref.read(pageNumber.notifier).state = 0;
+  
       await ref.read(pokedexNotifierProvider.notifier).postPokemon(newPokemon);
 
       if (mounted) {

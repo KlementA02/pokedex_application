@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/adapters.dart';
+import 'package:pokedex_application/Auth/presentation/login_page.dart';
 import 'package:pokedex_application/infrastructure/models/pokemon_models.dart';
 import 'package:pokedex_application/presentation/skeleton.dart';
 
@@ -27,7 +28,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Skeleton(),
+      home: LoginPage(),
     );
   }
 }
