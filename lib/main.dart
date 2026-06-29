@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/adapters.dart';
-import 'package:pokedex_application/Auth/presentation/login_page.dart';
-import 'package:pokedex_application/infrastructure/models/pokemon_models.dart';
-import 'package:pokedex_application/presentation/skeleton.dart';
+import 'package:pokedex_application/auth/presentation/auth_gate.dart';
+import 'package:pokedex_application/pokedex_screens/infrastructure/models/pokemon_models.dart';
 
 void main() async {
   // 2. Ensure Flutter bindings are ready for async setup
@@ -28,7 +27,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      home: AuthGate(),
     );
   }
 }

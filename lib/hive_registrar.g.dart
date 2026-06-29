@@ -3,7 +3,7 @@
 // Check in to version control
 
 import 'package:hive_ce/hive.dart';
-import 'package:pokedex_application/infrastructure/models/pokemon_models.dart';
+import 'package:pokedex_application/pokedex_screens/infrastructure/models/pokemon_models.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {

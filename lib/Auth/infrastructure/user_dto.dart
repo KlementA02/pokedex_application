@@ -1,125 +1,89 @@
-// ignore_for_file: invalid_annotation_target
+import 'package:meta/meta.dart';
+import 'package:pokedex_application/auth/domain/user.dart';
 
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:innox/auth/domain/user.dart';
-part 'user_dto.freezed.dart';
-part 'user_dto.g.dart';
+@immutable
+class UserDto {
+  final int id;
+  final String username;
+  final String email;
+  final String password;
 
-@freezed
-class UserDTO with _$UserDTO {
-  const UserDTO._();
-  const factory UserDTO({
-    required int usaIDpk,
-    required int empIDpk,
-    required int dptIDpk,
-    required int sxnIDpk,
-    required int untIDpk,
-    required String usaUsername,
-    required bool usaSuperuser,
-    required bool usaAllowSendingOfSMS,
-    required bool empIsOrgAdmin,
-    @JsonKey(name: "empIsDeptadmin") required bool empIsDeptAdmin,
-    required bool empIsSectionAdmin,
-    required bool empIsUnitAdmin,
-    required bool usaSeeSalaries,
-    required bool usaEditIntercom,
-    required bool usaSeeAllForms,
-    required String empFirstName,
-    required String empLastName,
-    required bool empShowBirthdayInNewsFlash,
-    required bool empShowWorkAnniversaryInNewsFlash,
-    required bool usaSeeAuditTrail,
-    required bool usaChangePassword,
-    required bool empIsDirector,
-    required bool empIsManager,
-    required bool empIsSupervisor,
-    required bool empIsCeo,
-    required String dptShtName,
-    required String sxnShtName,
-    required String untShtName,
-    required String dptName,
-    required String sxnName,
-    required String untName,
-    required String empName,
-    required String empStaffno,
-  }) = _UserDTO;
+  const UserDto({
+    required this.id,
+    required this.username,
+    required this.email,
+    required this.password,
+  });
 
-  factory UserDTO.fromJson(Map<String, dynamic> json) =>
-      _$UserDTOFromJson(json);
-
-  factory UserDTO.fromDomain(User _) {
-    return UserDTO(
-      usaIDpk: _.usaIDpk,
-      empIDpk: _.empIDpk,
-      dptIDpk: _.dptIDpk,
-      sxnIDpk: _.sxnIDpk,
-      untIDpk: _.untIDpk,
-      usaUsername: _.usaUsername,
-      usaSuperuser: _.usaSuperuser,
-      usaAllowSendingOfSMS: _.usaAllowSendingOfSMS,
-      empIsOrgAdmin: _.empIsOrgAdmin,
-      empIsDeptAdmin: _.empIsDeptAdmin,
-      empIsSectionAdmin: _.empIsSectionAdmin,
-      empIsUnitAdmin: _.empIsUnitAdmin,
-      usaSeeSalaries: _.usaSeeSalaries,
-      usaEditIntercom: _.usaEditIntercom,
-      usaSeeAllForms: _.usaSeeAllForms,
-      empShowBirthdayInNewsFlash: _.empShowBirthdayInNewsFlash,
-      empShowWorkAnniversaryInNewsFlash: _.empShowWorkAnniversaryInNewsFlash,
-      usaSeeAuditTrail: _.usaSeeAuditTrail,
-      usaChangePassword: _.usaChangePassword,
-      empIsDirector: _.empIsDirector,
-      empIsManager: _.empIsManager,
-      empIsSupervisor: _.empIsSupervisor,
-      empIsCeo: _.empIsCeo,
-      dptShtName: _.dptShtName,
-      sxnShtName: _.sxnShtName,
-      untShtName: _.untShtName,
-      dptName: _.dptName,
-      sxnName: _.sxnName,
-      untName: _.untName,
-      empName: _.empName,
-      empStaffno: _.empStaffno,
-      empFirstName: _.empFirstName,
-      empLastName: _.empLastName,
+  /// Factory constructor to parse raw incoming network JSON maps
+  factory UserDto.fromJson(Map<String, dynamic> json) {
+    return UserDto(
+      id: json['id'] as int,
+      username: json['username'] as String,
+      email: json['email'] as String,
+      password: json['password'] as String,
     );
   }
 
+  /// Converts the DTO back to a JSON map for remote API payloads
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'username': username,
+      'email': email,
+      'password': password,
+    };
+  }
+
+  /// DDD Mapper: Converts data layer DTO into a pure domain entity
   User toDomain() {
     return User(
-      usaIDpk: usaIDpk,
-      empIDpk: empIDpk,
-      dptIDpk: dptIDpk,
-      sxnIDpk: sxnIDpk,
-      untIDpk: untIDpk,
-      usaUsername: usaUsername,
-      usaSuperuser: usaSuperuser,
-      usaAllowSendingOfSMS: usaAllowSendingOfSMS,
-      empIsOrgAdmin: empIsOrgAdmin,
-      empIsDeptAdmin: empIsDeptAdmin,
-      empIsSectionAdmin: empIsSectionAdmin,
-      empIsUnitAdmin: empIsUnitAdmin,
-      usaSeeSalaries: usaSeeSalaries,
-      usaEditIntercom: usaEditIntercom,
-      usaSeeAllForms: usaSeeAllForms,
-      empShowBirthdayInNewsFlash: empShowBirthdayInNewsFlash,
-      empShowWorkAnniversaryInNewsFlash: empShowWorkAnniversaryInNewsFlash,
-      usaSeeAuditTrail: usaSeeAuditTrail,
-      usaChangePassword: usaChangePassword,
-      empIsDirector: empIsDirector,
-      empIsManager: empIsManager,
-      empIsSupervisor: empIsSupervisor,
-      empIsCeo: empIsCeo,
-      dptShtName: dptShtName,
-      sxnShtName: sxnShtName,
-      untShtName: untShtName,
-      dptName: dptName,
-      sxnName: sxnName,
-      untName: untName,
-      empName: empName,
-      empStaffno: empStaffno,
-      empFirstName: empFirstName,
-      empLastName: empLastName,
+      id: id,
+      username: username,
+      email: email,
+      password: password,
     );
   }
+
+  /// DDD Mapper: Creates a data layer DTO from an existing domain entity
+  factory UserDto.fromDomain(User domain) {
+    return UserDto(
+      id: domain.id,
+      username: domain.username,
+      email: domain.email,
+      password: domain.password,
+    );
+  }
+
+  UserDto copyWith({
+    int? id,
+    String? username,
+    String? email,
+    String? password,
+  }) {
+    return UserDto(
+      id: id ?? this.id,
+      username: username ?? this.username,
+      email: email ?? this.email,
+      password: password ?? this.password,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'UserDto(id: $id, username: $username, email: $email, password: [PROTECTED])';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is UserDto &&
+        other.id == id &&
+        other.username == username &&
+        other.email == email &&
+        other.password == password;
+  }
+
+  @override
+  int get hashCode => Object.hash(id, username, email, password);
 }

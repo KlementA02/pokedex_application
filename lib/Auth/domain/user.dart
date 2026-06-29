@@ -1,46 +1,66 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-part 'user.freezed.dart';
+import 'package:meta/meta.dart';
 
-@freezed
-class User with _$User {
-  const User._();
-  const factory User({
-    required int usaIDpk,
-    required int empIDpk,
-    required int dptIDpk,
-    required int sxnIDpk,
-    required int untIDpk,
-    required String usaUsername,
-    required bool usaSuperuser,
-    required bool usaAllowSendingOfSMS,
-    required bool empIsOrgAdmin,
-    required bool
-        empIsDeptAdmin, //remember to change it at the UserDTO class => empIsDeptadmin
-    required bool empIsSectionAdmin,
-    required bool empIsUnitAdmin,
-    required bool usaSeeSalaries,
-    required bool usaEditIntercom,
-    required bool usaSeeAllForms,
-    required bool empShowBirthdayInNewsFlash,
-    required bool empShowWorkAnniversaryInNewsFlash,
-    required bool usaSeeAuditTrail,
-    required bool usaChangePassword,
-    required bool empIsDirector,
-    required bool empIsManager,
-    required bool empIsSupervisor,
-    required bool empIsCeo,
-    required String empFirstName,
-    required String empLastName,
-    required String dptShtName,
-    required String sxnShtName,
-    required String untShtName,
-    required String dptName,
-    required String sxnName,
-    required String untName,
-    required String empName,
-    required String empStaffno,
+@immutable
+class User {
+  final int id;
+  final String username;
+  final String email;
+  final String password;
+
+  const User({
+    required this.id,
+    required this.username,
+    required this.email,
+    required this.password,
+  });
+
+  /// Factory blueprint matching Freezed's syntax pattern
+  factory User.create({
+    required int id,
+    required String username,
+    required String email,
+    required String password,
   }) = _User;
 
-  String get usaUserName => usaUsername;
-  String get empFirstName => empFirstName;
+  User copyWith({
+    int? id,
+    String? username,
+    String? email,
+    String? password,
+  }) {
+    return User(
+      id: id ?? this.id,
+      username: username ?? this.username,
+      email: email ?? this.email,
+      password: password ?? this.password,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'User(id: $id, username: $username, email: $email, password: [PROTECTED])';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is User &&
+        other.id == id &&
+        other.username == username &&
+        other.email == email &&
+        other.password == password;
+  }
+
+  @override
+  int get hashCode => Object.hash(id, username, email, password);
+}
+
+/// Hidden implementation class to fully mirror Freezed's internal architecture
+class _User extends User {
+  const _User({
+    required super.id,
+    required super.username,
+    required super.email,
+    required super.password,
+  });
 }
