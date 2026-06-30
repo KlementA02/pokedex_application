@@ -1,8 +1,8 @@
-import 'package:pokedex_application/domain/entities/pokemon_entity.dart';
-import 'package:pokedex_application/domain/repositories/pokemon_repository.dart';
-import 'package:pokedex_application/infrastructure/datasources/pokemon_local_datasource.dart';
-import 'package:pokedex_application/infrastructure/datasources/pokemon_remote_datasource.dart';
-import 'package:pokedex_application/infrastructure/models/pokemon_models.dart';
+import 'package:pokedex_application/pokedex_screens/domain/entities/pokemon_entity.dart';
+import 'package:pokedex_application/pokedex_screens/domain/repositories/pokemon_repository.dart';
+import 'package:pokedex_application/pokedex_screens/infrastructure/datasources/pokemon_local_datasource.dart';
+import 'package:pokedex_application/pokedex_screens/infrastructure/datasources/pokemon_remote_datasource.dart';
+import 'package:pokedex_application/pokedex_screens/infrastructure/models/pokemon_models.dart';
 
 class PokemonRepositoryImpl implements PokemonRepository {
   final PokemonRemoteDataSource remoteDataSource;

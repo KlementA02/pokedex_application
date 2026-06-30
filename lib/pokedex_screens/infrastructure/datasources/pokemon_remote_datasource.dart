@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pokedex_application/core/dio_api.dart';
-import 'package:pokedex_application/domain/entities/pokemon_entity.dart';
-import 'package:pokedex_application/infrastructure/models/pokemon_models.dart';
+import 'package:pokedex_application/pokedex_screens/domain/entities/pokemon_entity.dart';
+import 'package:pokedex_application/pokedex_screens/infrastructure/models/pokemon_models.dart';
 
 class PokemonRemoteDataSource {
   final DioApi dioApi;
@@ -15,7 +15,7 @@ class PokemonRemoteDataSource {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = response.data;
 
-      debugPrint(response.data);
+      debugPrint('Response data: ${response.data}');
 
       return data.entries.map((entry) {
         return PokemonModel.fromJson(entry.value, entry.key);
@@ -31,7 +31,9 @@ class PokemonRemoteDataSource {
         'type': pokemon.type.contains(',')
             ? pokemon.type.split(',').map((e) => e.trim()).toList()
             : [pokemon.type.trim()],
-        'image': pokemon.image.isEmpty ? '🥚' : pokemon.image,
+        'image': pokemon.image.isEmpty
+            ? 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png'
+            : pokemon.image,
         'hp': pokemon.hp,
         'attack': pokemon.attack,
         'defense': pokemon.defense,

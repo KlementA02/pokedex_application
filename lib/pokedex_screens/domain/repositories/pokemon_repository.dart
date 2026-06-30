@@ -1,4 +1,4 @@
-import 'package:pokedex_application/domain/entities/pokemon_entity.dart';
+import 'package:pokedex_application/pokedex_screens/domain/entities/pokemon_entity.dart';
 
 abstract class PokemonRepository {
   Future<List<PokemonEntity>> getPokedex();

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pokedex_application/application/pokedex_provider.dart';
-import 'package:pokedex_application/application/pokedex_state.dart';
-import 'package:pokedex_application/domain/entities/pokemon_entity.dart';
+import 'package:pokedex_application/pokedex_screens/application/pokedex_provider.dart';
+import 'package:pokedex_application/pokedex_screens/application/pokedex_state.dart';
+import 'package:pokedex_application/pokedex_screens/domain/entities/pokemon_entity.dart';
 
 class GetPage extends ConsumerWidget {
   const GetPage({super.key});

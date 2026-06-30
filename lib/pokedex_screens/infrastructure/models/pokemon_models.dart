@@ -1,5 +1,5 @@
 import 'package:hive_ce/hive.dart';
-import 'package:pokedex_application/domain/entities/pokemon_entity.dart';
+import 'package:pokedex_application/pokedex_screens/domain/entities/pokemon_entity.dart';
 
 part 'pokemon_models.g.dart';
 

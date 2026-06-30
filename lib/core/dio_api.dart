@@ -22,6 +22,7 @@ class ApiException implements Exception {
 /// Enhanced Dio API client that covers common use cases
 class DioApi {
   final Dio dio;
+  String? _authToken;
 
   DioApi(this.dio) {
     // Ensure default ngrok header (useful during local dev)
@@ -29,6 +30,29 @@ class DioApi {
       "ngrok-skip-browser-warning",
       () => "69420",
     );
+  }
+
+  void setAuthToken(String token) {
+    _authToken = token;
+    dio.options.headers['Authorization'] = 'Token $token';
+    dio.options.headers['X-Auth-Token'] = token;
+  }
+
+  void clearAuthToken() {
+    _authToken = null;
+    dio.options.headers.remove('Authorization');
+    dio.options.headers.remove('X-Auth-Token');
+  }
+
+  Options _withAuthHeader(Options? options) {
+    final headers = <String, dynamic>{...?options?.headers};
+
+    if (_authToken != null && _authToken!.isNotEmpty) {
+      headers['Authorization'] = 'Token $_authToken';
+      headers['X-Auth-Token'] = _authToken;
+    }
+
+    return (options ?? Options()).copyWith(headers: headers);
   }
 
   /// Factory constructor with common configuration
@@ -83,10 +107,12 @@ class DioApi {
     ProgressCallback? onReceiveProgress,
   }) async {
     try {
+      final requestOptions = _withAuthHeader(options);
+
       return await dio.get<T>(
         path,
         queryParameters: params,
-        options: options ?? Options(),
+        options: requestOptions,
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress,
       );
@@ -108,11 +134,13 @@ class DioApi {
     ProgressCallback? onReceiveProgress,
   }) async {
     try {
+      final requestOptions = _withAuthHeader(options);
+
       return await dio.post<T>(
         path,
         data: data,
         queryParameters: params,
-        options: options ?? Options(),
+        options: requestOptions,
         cancelToken: cancelToken,
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
@@ -135,11 +163,13 @@ class DioApi {
     ProgressCallback? onReceiveProgress,
   }) async {
     try {
+      final requestOptions = _withAuthHeader(options);
+
       return await dio.put<T>(
         path,
         data: data,
         queryParameters: params,
-        options: options ?? Options(),
+        options: requestOptions,
         cancelToken: cancelToken,
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
@@ -162,11 +192,13 @@ class DioApi {
     ProgressCallback? onReceiveProgress,
   }) async {
     try {
+      final requestOptions = _withAuthHeader(options);
+
       return await dio.patch<T>(
         path,
         data: data,
         queryParameters: params,
-        options: options ?? Options(),
+        options: requestOptions,
         cancelToken: cancelToken,
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
@@ -187,11 +219,13 @@ class DioApi {
     CancelToken? cancelToken,
   }) async {
     try {
+      final requestOptions = _withAuthHeader(options);
+
       return await dio.delete<T>(
         path,
         data: data,
         queryParameters: params,
-        options: options ?? Options(),
+        options: requestOptions,
         cancelToken: cancelToken,
       );
     } on DioException catch (e) {
@@ -351,15 +385,15 @@ class DioApi {
     }
   }
 
-  /// Add auth token dynamically (useful with interceptor)
-  void setAuthToken(String token, {String header = 'Authorization'}) {
-    dio.options.headers[header] = 'Bearer $token';
-  }
+  // /// Add auth token dynamically (useful with interceptor)
+  // void setAuthToken(String token, {String header = 'Authorization'}) {
+  //   dio.options.headers[header] = 'Bearer $token';
+  // }
 
-  /// Clear auth token
-  void clearAuthToken({String header = 'Authorization'}) {
-    dio.options.headers.remove(header);
-  }
+  // /// Clear auth token
+  // void clearAuthToken({String header = 'Authorization'}) {
+  //   dio.options.headers.remove(header);
+  // }
 
   /// Update base URL at runtime
   void updateBaseUrl(String baseUrl) {

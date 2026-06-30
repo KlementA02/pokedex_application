@@ -1,27 +1,16 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:pokedex_application/application/pokedex_state.dart';
-import 'package:pokedex_application/core/dio_api.dart';
-import 'package:pokedex_application/domain/repositories/pokemon_repository.dart';
-import 'package:pokedex_application/infrastructure/datasources/pokemon_local_datasource.dart';
-import 'package:pokedex_application/infrastructure/datasources/pokemon_remote_datasource.dart';
-import 'package:pokedex_application/infrastructure/repositories/pokemon_repository_impl.dart';
-
-final dioProvider = Provider((ref) {
-  return Dio(
-    BaseOptions(
-      baseUrl: 'https://imprudently-isotactic-neymar.ngrok-free.dev',
-      connectTimeout: const Duration(seconds: 90),
-      receiveTimeout: const Duration(seconds: 90),
-    ),
-  );
-});
+import 'package:pokedex_application/auth/application/auth_provider.dart';
+import 'package:pokedex_application/pokedex_screens/application/pokedex_state.dart';
+import 'package:pokedex_application/pokedex_screens/domain/repositories/pokemon_repository.dart';
+import 'package:pokedex_application/pokedex_screens/infrastructure/datasources/pokemon_local_datasource.dart';
+import 'package:pokedex_application/pokedex_screens/infrastructure/datasources/pokemon_remote_datasource.dart';
+import 'package:pokedex_application/pokedex_screens/infrastructure/repositories/pokemon_repository_impl.dart';
 
 final remoteDataSourceProvider = Provider((ref) {
-  final dio = ref.read(dioProvider);
-  return PokemonRemoteDataSource(DioApi(dio));
+  final dioApi = ref.read(authDioApiProvider);
+  return PokemonRemoteDataSource(dioApi);
 });
 
 final localDataSourceProvider = Provider((ref) => PokemonLocalDataSource());
