@@ -3,13 +3,14 @@ import 'package:pokedex_application/auth/domain/token_storage.dart';
 
 class AuthInterceptor extends Interceptor {
   final ITokenStorage _tokenStorage;
-  final Function() _onUnauthenticated; // Callback to trigger a logout state in your UI/Bloc
+  final Function()
+  _onUnauthenticated; // Callback to trigger a logout state in your UI/Bloc
 
   AuthInterceptor({
     required ITokenStorage tokenStorage,
     required Function() onUnauthenticated,
-  })  : _tokenStorage = tokenStorage,
-        _onUnauthenticated = onUnauthenticated;
+  }) : _tokenStorage = tokenStorage,
+       _onUnauthenticated = onUnauthenticated;
 
   @override
   Future<void> onRequest(
@@ -21,7 +22,8 @@ class AuthInterceptor extends Interceptor {
 
     // 2. If a token exists, attach it to the authorization header
     if (token != null && token.isNotEmpty) {
-      options.headers['Authorization'] = 'Bearer $token';
+      options.headers['Authorization'] = 'Token $token';
+      options.headers['X-Auth-Token'] = token;
     }
 
     // Explicitly accept JSON responses
@@ -37,7 +39,7 @@ class AuthInterceptor extends Interceptor {
     if (err.response?.statusCode == 401) {
       // Clear local storage
       _tokenStorage.clearToken();
-      
+
       // Notify the app state management that the user is no longer unauthenticated
       _onUnauthenticated();
     }

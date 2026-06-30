@@ -18,27 +18,36 @@ class _SkeletonState extends ConsumerState<Skeleton> {
   Widget build(BuildContext context) {
     final currentIndex = ref.watch(pageNumber);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pokedex'),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await ref.read(authNotifierProvider.notifier).signOut();
-            },
-            icon: const Icon(Icons.logout),
-            tooltip: 'Log out',
-          ),
-        ],
+      // appBar: AppBar(
+      //   title: const Text('Pokedex'),
+      //   actions: [
+      //     IconButton(
+      //       onPressed: () async {
+      //         await ref.read(authNotifierProvider.notifier).signOut();
+      //       },
+      //       icon: const Icon(Icons.logout),
+      //       tooltip: 'Log out',
+      //     ),
+      //   ],
+      // ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.redAccent,
+
+        onPressed: () async {
+          await ref.read(authNotifierProvider.notifier).signOut();
+        },
+        child: const Icon(Icons.logout, color: Colors.white),
       ),
       body: pages.elementAt(currentIndex),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.redAccent,
         currentIndex: currentIndex,
         onTap: (index) {
           ref.read(pageNumber.notifier).state = index;
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Get'),
-          BottomNavigationBarItem(icon: Icon(Icons.post_add), label: 'Post'),
+          BottomNavigationBarItem(icon: Icon(Icons.home, color: Colors.white), label: 'Get'),
+          BottomNavigationBarItem(icon: Icon(Icons.post_add, color: Colors.white), label: 'Post'),
         ],
       ),
     );

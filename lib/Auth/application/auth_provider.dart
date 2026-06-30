@@ -6,6 +6,7 @@ import 'package:pokedex_application/auth/domain/auth_failure_f.dart';
 import 'package:pokedex_application/auth/domain/token_storage.dart';
 import 'package:pokedex_application/auth/domain/user.dart';
 import 'package:pokedex_application/auth/infrastructure/auth_interceptor.dart';
+import 'package:pokedex_application/auth/infrastructure/auth_remote_service.dart';
 import 'package:pokedex_application/auth/infrastructure/secure_token_storage.dart';
 import 'package:pokedex_application/core/dio_api.dart';
 
@@ -17,9 +18,17 @@ final tokenStorageProvider = Provider<ITokenStorage>((ref) {
   return SecureTokenStorage(ref.watch(secureStorageProvider));
 });
 
+final authRemoteServiceProvider = Provider<AuthRemoteService>((ref) {
+  final dioApi = ref.watch(authDioApiProvider);
+  return AuthRemoteService(dioApi);
+});
+
 final authNotifierProvider =
     legacy.StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-      return AuthNotifier(ref.watch(tokenStorageProvider));
+      return AuthNotifier(
+        ref.watch(tokenStorageProvider),
+        ref.watch(authRemoteServiceProvider),
+      );
     });
 
 final authDioApiProvider = Provider<DioApi>((ref) {
@@ -31,7 +40,7 @@ final authDioApiProvider = Provider<DioApi>((ref) {
       AuthInterceptor(
         tokenStorage: tokenStorage,
         onUnauthenticated: () {
-          ref.read(authNotifierProvider.notifier).signOut();
+          tokenStorage.clearToken();
         },
       ),
     ],
@@ -40,8 +49,10 @@ final authDioApiProvider = Provider<DioApi>((ref) {
 
 class AuthNotifier extends legacy.StateNotifier<AuthState> {
   final ITokenStorage _tokenStorage;
+  final AuthRemoteService _authRemoteService;
 
-  AuthNotifier(this._tokenStorage) : super(const AuthState.initial()) {
+  AuthNotifier(this._tokenStorage, this._authRemoteService)
+    : super(const AuthState.initial()) {
     _bootstrap();
   }
 
@@ -49,6 +60,7 @@ class AuthNotifier extends legacy.StateNotifier<AuthState> {
     final token = await _tokenStorage.getToken();
 
     if (token != null && token.isNotEmpty) {
+      _authRemoteService.dioApi.setAuthToken(token);
       state = AuthState.authenticated(
         User(
           id: 1,
@@ -58,6 +70,7 @@ class AuthNotifier extends legacy.StateNotifier<AuthState> {
         ),
       );
     } else {
+      _authRemoteService.dioApi.clearAuthToken();
       state = const AuthState.unauthenticated();
     }
   }
@@ -68,28 +81,26 @@ class AuthNotifier extends legacy.StateNotifier<AuthState> {
 
     if (normalizedEmail.isEmpty || normalizedPassword.isEmpty) {
       state = const AuthState.failure(
-        AuthFailure.inValidCredentials('Please enter your email and password.'),
+        AuthFailure.inValidCredentials(
+          'Please enter your username or email and password.',
+        ),
       );
       return;
     }
 
-    if (!normalizedEmail.contains('@')) {
-      state = const AuthState.failure(
-        AuthFailure.inValidCredentials('Please enter a valid email address.'),
+    try {
+      final result = await _authRemoteService.loginUser(
+        normalizedEmail,
+        normalizedPassword,
       );
-      return;
+
+      await _tokenStorage.saveToken(result.token);
+      _authRemoteService.dioApi.setAuthToken(result.token);
+
+      state = AuthState.authenticated(result.user.toDomain());
+    } catch (error) {
+      state = AuthState.failure(AuthFailure.server(error.toString()));
     }
-
-    await _tokenStorage.saveToken('demo-token-$normalizedEmail');
-
-    state = AuthState.authenticated(
-      User(
-        id: 1,
-        username: normalizedEmail.split('@').first,
-        email: normalizedEmail,
-        password: normalizedPassword,
-      ),
-    );
   }
 
   Future<void> signUp({
@@ -119,20 +130,25 @@ class AuthNotifier extends legacy.StateNotifier<AuthState> {
       return;
     }
 
-    await _tokenStorage.saveToken('demo-token-$normalizedEmail');
+    try {
+      final result = await _authRemoteService.registerUser(
+        normalizedUsername,
+        normalizedEmail,
+        normalizedPassword,
+      );
 
-    state = AuthState.authenticated(
-      User(
-        id: 2,
-        username: normalizedUsername,
-        email: normalizedEmail,
-        password: normalizedPassword,
-      ),
-    );
+      await _tokenStorage.saveToken(result.token);
+      _authRemoteService.dioApi.setAuthToken(result.token);
+
+      state = AuthState.authenticated(result.user.toDomain());
+    } catch (error) {
+      state = AuthState.failure(AuthFailure.server(error.toString()));
+    }
   }
 
   Future<void> signOut() async {
     await _tokenStorage.clearToken();
+    _authRemoteService.dioApi.clearAuthToken();
     state = const AuthState.unauthenticated();
   }
 }

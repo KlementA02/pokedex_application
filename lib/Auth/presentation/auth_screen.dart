@@ -146,16 +146,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       TextFormField(
                         controller: _emailController,
                         decoration: const InputDecoration(
-                          labelText: 'Email',
+                          labelText: 'Email or Username',
                           prefixIcon: Icon(Icons.email_outlined),
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Please enter your email';
-                          }
-                          if (!value.contains('@')) {
-                            return 'Please enter a valid email';
+                            return 'Please enter your email or username';
                           }
                           return null;
                         },
